@@ -12,4 +12,13 @@ b) loo kataloog, kus hakkad skriptima
 mkdir skriptimine
 
 c) sisene antud kausta
-cd skriptimine
+cd /home/roland/skriptimine
+
+d) tekita lokaalne repositoorium git süsteemi jaoks antud kaustas git init
+
+remote seadistamine:
+e) git remote add nimi github:address
+git remote add skriptimine git@github.com:kasutajanimi/reponimi.git
+
+f)git remote kontroll
+git remote -v
