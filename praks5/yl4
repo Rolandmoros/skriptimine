@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Tervitab kasutajat süsteemi kellaaja järgi, lisades kasutaja nime
+#
+aeg=$(date +%-H)       # praegune tund (0-23)
+nimi=$(whoami)         # sisselogitud kasutaja nimi
+
+if [ $aeg -ge 6 ] && [ $aeg -lt 12 ]; then
+        echo "Tere hommikust, $nimi!"
+elif [ $aeg -ge 12 ] && [ $aeg -lt 18 ]; then
+        echo "Tere päevast, $nimi!"
+elif [ $aeg -ge 18 ] && [ $aeg -lt 22 ]; then
+        echo "Tere õhtust, $nimi!"
+elif [ $aeg -ge 22 ] && [ $aeg -lt 24 ]; then
+        echo "Head ööd, $nimi!"
+elif [ $aeg -ge 0 ] && [ $aeg -lt 6 ]; then
+        echo "Head ööd, $nimi!"
+else
+        echo "Vale sisend"
+fi
+# skripti lõpp
