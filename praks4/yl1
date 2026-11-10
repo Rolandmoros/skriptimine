@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Kontrollib, kas sisestatud t2isarv on paaris v6i paaritu
+#
+echo -n "Sisesta suvaline täisarv: "
+read arv
+# arvutame jäägi 2-ga jagamisel
+jaak=$(( $arv % 2 ))
+if [ $jaak -eq 0 ]
+then
+   echo "$arv on paaris"
+else
+   echo "$arv on paaritu"
+fi
+# kontroll on lõppenud
