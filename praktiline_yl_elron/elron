@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# Elroni rongiinfo: kuvab valitud marsruudi rongide väljumisajad
+# Elroni reaalaja API põhjal ning värvib möödunud väljumised punaseks
+# ja tulevased roheliseks.
+#
+
+# värvikoodid (ANSI escape)
+PUNANE='\033[0;31m'
+ROHELINE='\033[0;32m'
+NC='\033[0m'            # värvi lähtestamine
+
+# 1. menüü ja marsruudi valimine
+echo "ELRONI RONGIINFO"
+echo
+echo "Vali marsruut:"
+echo
+echo "1 - Tartu → Tallinn"
+echo "2 - Tartu → Valga"
+echo "3 - Tartu → Koidula"
+echo
+echo -n "Sisesta valik: "
+read valik
+
+# 2. tühja sisendi kontroll
+if [ -z "$valik" ]; then
+    echo "Valik jäi sisestamata."
+    exit 1
+fi
+
+# lähte- ja sihtjaama määramine
+case $valik in
+    1) lahe="Tartu"; siht="Tallinn" ;;
+    2) lahe="Tartu"; siht="Valga" ;;
+    3) lahe="Tartu"; siht="Koidula" ;;
+    *) echo "Vigane valik."; exit 1 ;;
+esac
+
+# 3. andmete küsimine Elroni API-st
+vastus=$(curl -sf "https://elron.ee/live-map/stop/$lahe")
+if [ $? -ne 0 ] || [ -z "$vastus" ]; then
+    echo "Elroni API päring ebaõnnestus."
+    exit 1
+fi
+
+# 4-5. filtreerimine: üks rong ühele reale, siis ainult sobiva sihtjaamaga
+rongid=$(echo "$vastus" | tr -d '\n' | sed 's/},/},\n/g' | grep "\"sihtjaam\": *\"$siht\"")
+
+# 6. kas sobivaid rongi leiti
+if [ -z "$rongid" ]; then
+    echo "Sobivaid ronge ei leitud."
+    exit 1
+fi
+
+# 7. väljumisaegade eraldamine (ainult HH:MM)
+ajad=$(echo "$rongid" | grep -o '"plaaniline_aeg": *"[0-9:]*"' | grep -o '[0-9][0-9]:[0-9][0-9]')
+
+# 8. praegune kellaaeg
+praegu=$(date +%H:%M)
+praegu_arv=$((10#${praegu//:/}))      # 10:35 -> 1035
+
+echo
+echo "$lahe → $siht"
+echo "Praegune kellaaeg: $praegu"
+echo
+echo "Väljumised:"
+echo
+
+# 9-10. võrdlus praeguse ajaga ja värviline väljund
+for aeg in $ajad; do
+    aeg_arv=$((10#${aeg//:/}))
+    if [ $aeg_arv -lt $praegu_arv ]; then
+        echo -e "${PUNANE}$aeg  rong on juba väljunud${NC}"
+    else
+        echo -e "${ROHELINE}$aeg  rong on veel ees${NC}"
+    fi
+done
+# skripti lõpp
