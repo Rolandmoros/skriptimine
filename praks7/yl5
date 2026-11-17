@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Valjastab kolmnurga, kus tarnide ees on o-tahed:
+# igal real on (ridade arv - rea number) o-d ja rea numbri jagu tarne
+#
+echo -n "Sisesta ridade arv: "
+read read_arv
+
+for (( i=1; i<=read_arv; i++ ))
+do
+    echo -n "$i. "
+    # o-tahed
+    for (( j=1; j<=read_arv-i; j++ ))
+    do
+        echo -n "o "
+    done
+    # tarnid
+    for (( k=1; k<=i; k++ ))
+    do
+        echo -n "* "
+    done
+    echo ""
+done
+# skripti lopp
